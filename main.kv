@@ -1,0 +1,173 @@
+[MyLabel@Label]:
+    text: ctx.text if hasattr(ctx, 'text') else '' 
+    font_size: 20
+    markup: True
+
+<RoundedButton@Button>:
+    background_color: 0,0,0,0  # the last zero is the critical on, make invisible
+    canvas.before:
+        # need to change colour
+        Color:
+            rgba: 0,1,0,0
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [50,10]
+        
+
+ScreenManager:
+    WelcomeScreen:
+    FileChoose:
+    FileConfirm:
+    Display:
+    OutputScreen:
+
+<WelcomeScreen>
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: './images/1start.png'
+    name: "welcome" 
+    id: welcome
+    Button: 
+        on_release: app.root.current = "files"
+        pos_hint: {"x":0.62, "top":0.395}
+        background_color: 1, 1, 1, 0
+        size_hint: 0.325, 0.2
+
+<FileChoosePopup>:
+    title: "Choose a File"
+    size_hint: .9, .9
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: "vertical"
+        FileChooser:
+            id: filechooser
+            path: "./"
+            FileChooserIconLayout
+
+        BoxLayout:
+            size_hint: (1, 0.1)
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            spacing: 20
+            Button:
+                text: "Cancel"
+                on_release: root.dismiss()
+            Button:
+                text: "Load"
+                on_press: root.load(filechooser.selection)
+                on_release: app.root.current = "fileconfirm"
+                id: ldbtn
+                disabled: True if filechooser.selection==[] else False
+
+<FileChoose>
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: './images/2inputrssi.png'
+    name: "files" 
+    id: files
+    Button:
+        text: 'Choose Files'
+        on_press: root.open_popup()
+        background_color: 1, 1, 1, 0
+        size_hint: 0.423, 0.4948
+        pos_hint: {"x":0.542, "top":0.7855}
+
+# <FileConfirm>
+#     name: "fileconfirm" 
+#     id: fileconfirm
+#     canvas.before:
+#         Rectangle:
+#             pos: self.pos
+#             size: self.size
+#             source: './images/3inputrssi.png'
+#     TextInput:
+#         id: inputCSV
+#         # readonly: True
+#         size_hint: 0.423, 0.4948
+#         pos_hint: {"x":0.542, "top":0.7855}
+#         foreground_color: (0, 0, 1, 1)
+#         background_color: 0,0,0,0
+#     Button: 
+#         text: "Confirm"
+#         on_press: app.root.current = "display"
+#         # width, height
+#         pos_hint: {"x":0.6275, "top":0.225}
+#         background_color: 1, 1, 1, 0
+
+# <AdditionalInput>
+#     canvas.before:
+#         Rectangle:
+#             pos: self.pos
+#             size: self.size
+#             source: './images/4kvalue.png'
+#     name: "additional"
+#     id: additional
+
+#     RoundedButton:
+#         pos_hint: {"x":0, "top":1}
+#         size_hint: 0.423, 0.4945
+#         id: kButtonA
+#         on_press: root.update()
+
+#     Button:
+#         text: "Continue"
+#         on_release:
+#             #root.saveValues() 
+#             app.root.current = "display"
+#         size_hint: 0.253, 0.133
+#         pos_hint: {"x":0.6275, "top":0.225}
+#         background_color: 1,0,0,0.4
+
+
+<Display>
+    name: "display"
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            size_hint_y: 0.1
+            font_size: 20
+            text: 'Floor plan:'
+
+        Image:
+            size_hint_y: 0.5
+            # source: 'images/labelled.png'
+            source: 'images/floorplan.png'
+            size: self.texture_size
+
+        
+        Button:
+            size_hint_y: 0.1
+            text: "Continue"
+            on_release:
+                app.root.current = 'output'
+
+
+
+<OutputScreen>
+    name: "output"
+    id: output
+    coords: current_coordinates
+    on_enter: root.load()
+
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            size_hint_y: 0.1
+            font_size: 30
+            id: current_coordinates
+            text: root.coordinates
+
+        Image:
+            id: visual_output
+            size_hint_y: 0.5
+            # source: 'images/original.png'
+            source: 'images/floorplan.png'
+
+
+        
+
