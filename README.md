@@ -1,4 +1,4 @@
-# ES999: Navigating Indoor Small-Scaled Worlds: Exploring Intersections Between RSSI and IMU for Indoor Localisation
+# ES015: Navigating Indoor Small-Scaled Worlds: Exploring Intersections Between RSSI and IMU for Indoor Localisation
 ## SSEF 2023. Goh Ying En Ian, Heng Yi Wang, Lam Yik Ting
 
 # Directory
