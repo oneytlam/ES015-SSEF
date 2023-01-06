@@ -1,19 +1,15 @@
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.uix.screenmanager import Screen, ScreenManager, NoTransition
+from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
 from kivy.clock import Clock, mainthread
 from kivy.uix.floatlayout import FloatLayout
 from processing.prepareData import getTestData
-from processing.knnOnDrBuiData import getCoords
 from processing.knn_imu import get_prediction
 from processing.createWalls import WALLS, Point, RIGHT_X_metres, BOTTOM_Y_metres, ORIGIN_X, ORIGIN_Y, dx, dy
 from processing.rulechecking import validCoords
 from processing.imu import imuChange
-from processing.combine import finalCoords
-# from processing.pipeline1 import pipeline
-from random import randint  # To be removed
 import time
 import csv
 import cv2
@@ -107,7 +103,6 @@ class OutputScreen(Screen):
     def update_coords(self):
         global coords, index, prevCoords
         global velocityX, velocityY, angleX, angleY
-        # rssiCoords = getCoords(strengths[index], 5)
         
         endTime = strengths[index][2]
         
@@ -117,20 +112,14 @@ class OutputScreen(Screen):
         else:
             startTime = 0
         # print(startTime, endTime)    
-        # if endTime == 0:
-        #     imuX, imuY, velocityX, velocityY, angleX, angleY = 0, 0, 0, 0, 0, 0
-        # else:
-        #     # print(velocityX, velocityY, angleX, angleY)
-        #     imuX, imuY, velocityX, velocityY, angleX, angleY = imuChange(IMU_PATH, startTime, endTime, velocityX, velocityY, angleX, angleY)
-        # coords = [coords[0] + 20, coords[1] + 20]
-        # if prevCoords != None:
-        #     coords = finalCoords(rssiCoords, [-imuY, -imuX], prevCoords, 0.8)
-        #     coords = validCoords(Point(coords[0], coords[1]), Point(prevCoords[0], prevCoords[1]), WALLS, endTime - startTime)
-        # else:
-        #     coords = rssiCoords
-        # coords = [x + 0.04 * y for x, y in zip(prevCoords, [imuY, imuX])]
-        # coords = get_prediction(strengths[index], [imuX*0.4, imuY*0.4], prevCoords)
-        coords = get_prediction(strengths[index], [0, 0], prevCoords)
+        if endTime == 0:
+            imuX, imuY, velocityX, velocityY, angleX, angleY = 0, 0, 0, 0, 0, 0
+        else:
+            # print(velocityX, velocityY, angleX, angleY)
+            imuX, imuY, velocityX, velocityY, angleX, angleY = imuChange(IMU_PATH, startTime, endTime, velocityX, velocityY, angleX, angleY)
+        coords = [coords[0] + 20, coords[1] + 20]
+
+        coords = get_prediction(strengths[index], [imuX*0.4, imuY*0.4], prevCoords)
         print(coords)
         coords = validCoords(Point(coords[0], coords[1]), Point(prevCoords[0], prevCoords[1]), WALLS, endTime - startTime)
         coords = [round(x, 2) for x in coords]
